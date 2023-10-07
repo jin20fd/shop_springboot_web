@@ -33,7 +33,12 @@ public class SecurityConfig {
                 .requestMatchers("/", "/members/**", "/item/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
-            );
+            )
+
+            .exceptionHandling((exceptionConfig) -> exceptionConfig
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            )
+        ;
 
         return http.build();
     }
