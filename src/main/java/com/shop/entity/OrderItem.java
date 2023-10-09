@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class OrderItem {
     @Id
     @GeneratedValue
-    @Column(name = "item_id")
+    @Column(name = "order_item_id")
     private Long id;
 
     @ManyToOne

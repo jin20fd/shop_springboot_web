@@ -3,9 +3,6 @@ package com.shop.entity;
 import com.shop.constant.ItemSellStatus;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.OrderRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.shop.repository.MemberRepository;
+//import com.shop.repository.OrderItemRepository;
 
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
@@ -48,27 +49,6 @@ class OrderTest {
         return item;
     }
 
-    public Order createOrder(){
-        Order order = new Order();
-
-        for(int i=0;i<3;i++){
-            Item item = createItem();
-            itemRepository.save(item);
-            OrderItem orderItem = new OrderItem();
-            orderItem.setItem(item);
-            orderItem.setCount(10);
-            orderItem.setOrderPrice(1000);
-            orderItem.setOrder(order);
-            order.getOrderItems().add(orderItem);
-        }
-        Member member = new Member();
-        memberRepository.save(member);
-
-        order.setMember(member);
-        orderRepository.save(order);
-        return order;
-    }
-
     @Test
     @DisplayName("영속성 전이 테스트")
     public void cascadeTest() {
@@ -94,6 +74,25 @@ class OrderTest {
         assertEquals(3, savedOrder.getOrderItems().size());
     }
 
+    public Order createOrder(){
+        Order order = new Order();
+        for(int i=0;i<3;i++){
+            Item item = createItem();
+            itemRepository.save(item);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setItem(item);
+            orderItem.setCount(10);
+            orderItem.setOrderPrice(1000);
+            orderItem.setOrder(order);
+            order.getOrderItems().add(orderItem);
+        }
+        Member member = new Member();
+        memberRepository.save(member);
+        order.setMember(member);
+        orderRepository.save(order);
+        return order;
+    }
+
     @Test
     @DisplayName("고아객체 제거 테스트")
     public void orphanRemovalTest(){
@@ -101,4 +100,5 @@ class OrderTest {
         order.getOrderItems().remove(0);
         em.flush();
     }
+
 }
